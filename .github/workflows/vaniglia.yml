@@ -1,0 +1,93 @@
+# This is a basic workflow to help you get started with Actions
+
+name: vaniglia
+
+# Controls when the action will run. 
+on:
+  # Build every 7 days
+  schedule:
+    - cron: "0 0 * * 0"
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches: [ master, runner ]
+    paths: [ '**.yml' ]
+  pull_request:
+    branches: [ master, runner ]
+    paths: [ '**.yml' ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build-vaniglia"
+  build-vaniglia:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      - name: Prerequisites
+        run: |
+          # Packages
+          sudo apt install -y pcregrep
+          # Get appimagebuilder
+          wget -q "https://github.com/AppImageCrafters/appimage-builder/releases/download/v1.0.3/appimage-builder-1.0.3-x86_64.AppImage" -O appimage-builder
+          chmod +x appimage-builder
+          sudo mv appimage-builder /usr/bin
+          # Get wine version
+          chmod +x fetch.sh
+
+      # Get wine version
+      - name: Version
+        id: version
+        run: |
+          version_wine="$(./fetch.sh vaniglia --version)"
+          echo "version_wine=$version_wine" >> $GITHUB_ENV
+          echo "version_wine=$version_wine" >> $GITHUB_OUTPUT
+
+      # Builds the appimage
+      - name: Build appimage
+        run: |
+          # add dir dist
+          mkdir dist
+
+          # Select vaniglia
+          sed -i 's/BOTTLES_RUNNER/vaniglia/' wine-bottles.yml
+
+          appimage-builder --recipe wine-bottles.yml
+          mv *.AppImage dist/wine-vaniglia-${{ env.version_wine }}-continuous-x86_64.AppImage
+          mv *.AppImage.zsync dist/wine-vaniglia-${{ env.version_wine }}-continuous-x86_64.AppImage.zsync
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v1.0.0
+        with:
+          name: wine-vaniglia-${{ env.version_wine }}-continuous-x86_64.AppImage
+          path: 'dist'
+
+    outputs:
+      version: ${{ steps.version.outputs.version_wine }}
+
+
+  release-vaniglia:
+      needs: [build-vaniglia]
+      runs-on: ubuntu-latest
+
+      steps:
+        - uses: actions/download-artifact@v1
+          with:
+            name: wine-vaniglia-${{ needs.build-vaniglia.outputs.version }}-continuous-x86_64.AppImage
+
+        - name: release
+          uses: marvinpinto/action-automatic-releases@latest
+          with:
+            title: Continuous vaniglia ${{ needs.build-vaniglia.outputs.version }}
+            automatic_release_tag: continuous-vaniglia
+            prerelease: false
+            draft: false
+            files: |
+              wine-vaniglia-${{ needs.build-vaniglia.outputs.version }}-continuous-x86_64.AppImage
+            repo_token: ${{ secrets.GITHUB_TOKEN }}

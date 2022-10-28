@@ -1,12 +1,12 @@
 # This is a basic workflow to help you get started with Actions
 
-name: CI
+name: staging
 
 # Controls when the action will run. 
 on:
-  # Build at 00:00 on every 12th day-of-month.
+  # Build every 7 days
   schedule:
-    - cron: "0 0 */12 * *"
+    - cron: "0 0 * * 0"
   # Triggers the workflow on push or pull request events but only for the master branch
   push:
     branches: [ master ]
@@ -32,8 +32,12 @@ jobs:
 
       - name: Prerequisites
         run: |
+          # Packages
+          sudo apt install -y pcregrep
+          # Builder
           wget -q "https://github.com/AppImageCrafters/appimage-builder/releases/download/v1.0.3/appimage-builder-1.0.3-x86_64.AppImage" -O appimage-builder ; chmod +x appimage-builder ; sudo mv appimage-builder /usr/bin
-          mkdir -p /usr/share/icons/hicolor/scalable/ ; cp wine.svg /usr/share/icons/hicolor/scalable/
+          # Icon
+          mkdir -p /usr/share/icons/hicolor/scalable/ ; cp doc/logo-wine.svg /usr/share/icons/hicolor/scalable/wine.svg
           # staging
           echo "WINE_VER=staging_$(wget -qO- https://dl.winehq.org/wine-builds/ubuntu/dists/bionic/main/binary-amd64/ | grep wine-staging | sed 's|_| |g;s|~| |g' | awk '{print $5}' | tail -n1)" >> $GITHUB_ENV
 

@@ -19,12 +19,6 @@ elif [[ $VENDOR == *"Radeon"* ]]; then
   export VK_ICD_FILENAMES="/usr/share/vulkan/icd.d/radeon_icd.i686.json:/usr/share/vulkan/icd.d/radeon_icd.x86_64.json"
 fi
 
-# Load winecfg if no arguments given
-APPLICATION=""
-if [ -z "$*" ] ; then
-  APPLICATION="winecfg"
-fi
-
 # Allow the AppImage to be symlinked to e.g., /usr/bin/wineserver
 if [ -n "$APPIMAGE" ] ; then
   BINARY_NAME=$(basename "$ARGV0")
@@ -32,20 +26,18 @@ else
   BINARY_NAME=$(basename "$0")
 fi
 
-if [ -n "$1" ] && [ -e "$APPDIR/bin/$1" ] ; then
-  MAIN="$APPDIR/bin/$1" ; shift
-elif [ -n "$1" ] && [ -e "$APPDIR/usr/bin/$1" ] ; then
-  MAIN="$APPDIR/usr/bin/$1" ; shift
-elif [ -e "$APPDIR/bin/$BINARY_NAME" ] ; then
-  MAIN="$APPDIR/bin/$BINARY_NAME"
-elif [ -e "$APPDIR/usr/bin/$BINARY_NAME" ] ; then
-  MAIN="$APPDIR/usr/bin/$BINARY_NAME"
-else
-  MAIN="$APPDIR/usr/bin/wine"
+MAIN=""
+
+if [ -z "$MAIN" ]; then
+  MAIN="$(find "$APPDIR/bin" "$APPDIR/usr/bin" -iname "$BINARY_NAME" -print -quit)"
 fi
 
-if [ -z "$APPLICATION" ] ; then
-"$MAIN" "$@" | cat
-else
-"$MAIN" "$APPLICATION" | cat
-fi  
+if [ -z "$MAIN" ]; then
+  MAIN="$(find "$APPDIR/bin" "$APPDIR/usr/bin" -iname "$1" -print -quit)"
+fi
+
+if [ -z "$MAIN" ]; then
+  MAIN="$(find "$APPDIR/bin" "$APPDIR/usr/bin" \( -iname "wine" -o -iname "wine64" \) -print -quit)"
+fi
+
+"$MAIN" "$@"

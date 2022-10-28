@@ -1,44 +1,51 @@
-<p align="center">
-    <img src="https://github.com/mmtrt/WINE_AppImage/raw/master/wine.svg" alt="WINE logo" width=128 height=128>
+## Wine Appimages
 
-<h2 align="center">WINE AppImage</h2>
-
-  <p align="center">WINE AppImage (unofficial) AppImages by GitHub Actions Continuous Integration
-    <br>
-    <a href="https://github.com/mmtrt/WINE_AppImage/issues/new">Report bug</a>
-    ·
-    <a href="https://github.com/mmtrt/WINE_AppImage/issues/new">Request feature</a>
-    ·
-    <a href="https://github.com/mmtrt/WINE_AppImage/releases">Download AppImage</a>
-  </p>
-</p>
-
-## Info
- * This AppImage does not have any GPU drivers see requirements below before getting angry at me.
+This repository uses `github ci` to build `wine` appimages. These do not require
+`32-bit glibc`, and therefore, work across several linux distributions out of
+the box. The releases included are built from `wine staging`, `wine caffe`,
+`wine vaniglia`, and `wine soda`. More information about their characteristics
+and differences can be found
+[here](https://docs.usebottles.com/components/runners).
 
 ## Get Started
 
-Download the latest release from
+Download the latest release for:
 
-| Stable | Devel | Staging |
-| ------- | --------- | --------- |
-| <img src="https://github.com/mmtrt/WINE_AppImage/raw/master/wine.svg" height=100> | <img src="https://github.com/mmtrt/WINE_AppImage/raw/master/wine.svg" height=100> | <img src="https://github.com/mmtrt/WINE_AppImage/raw/master/wine.svg" height=100> |
-| [Download](https://github.com/mmtrt/WINE_AppImage/releases/tag/continuous-stable) | [Download](https://github.com/mmtrt/WINE_AppImage/releases/tag/continuous-devel) | [Download](https://github.com/mmtrt/WINE_AppImage/releases/tag/continuous-staging) |
+| Staging | Caffe | Vaniglia | Soda |
+| ------- | --------- | --------- | --------- |
+| <img src="./doc/logo-wine.svg" width=100 height=100> | <img src="./doc/logo-caffe.svg" width=100 height=100> | <img src="./doc/logo-vaniglia.svg" width=100 height=100> | <img src="./doc/logo-soda.svg" width=100 height=100>
+| [Download](https://github.com/ruanformigoni/wine/releases/download/continuous-staging/wine-staging_7.19-x86_64.AppImage) | [Download](https://github.com/ruanformigoni/wine/releases/download/continuous-caffe/wine-caffe-7.19-continuous-x86_64.AppImage) | [Download](https://github.com/ruanformigoni/wine/releases/download/continuous-vaniglia/wine-vaniglia-7.19-continuous-x86_64.AppImage) | [Download](https://github.com/ruanformigoni/wine/releases/download/continuous-soda/wine-soda-7.0-6-continuous-x86_64.AppImage)
+
+</p>
 
 
-### Executing
-#### File Manager
-Just double click the `*.AppImage` file and you are done!
+### Usage Examples
 
-> In normal cases, the above method should work, but in some rare cases
-the `+x` permissisions. So, right click > Properties > Allow Execution
-#### Terminal
-```bash
-./wine-*.AppImage
-```
+Make the file executable before usage:
 ```bash
 chmod +x wine-*.AppImage
-./wine-*.AppImage
+```
+
+---
+
+Run application:
+```bash
+./wine-*.AppImage my-application.exe
+```
+
+---
+
+Wine config:
+```bash
+./wine-*.AppImage winecfg
+```
+
+---
+
+Winetricks:
+
+```bash
+./wine-*.AppImage winetricks
 ```
 
 In case, if FUSE support libraries are not installed on the host system, it is
@@ -46,8 +53,7 @@ still possible to run the AppImage
 
 ```bash
 ./wine-*.AppImage --appimage-extract
-cd squashfs-root
-./AppRun
+./squashfs-root/AppRun
 ```
 
 ## Requirements

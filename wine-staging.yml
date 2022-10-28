@@ -7,7 +7,7 @@ script:
   # Add winetricks
   - wget -q "https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks" -P ./AppDir/bin && chmod +x ./AppDir/bin/winetricks
   # Copy App icon to AppDir/usr/share/icons needed prior to appimage-builder ver 1.x.x
-  - mkdir -p AppDir/usr/share/icons ; cp wine.svg AppDir/usr/share/icons
+  - mkdir -p AppDir/usr/share/icons ; cp doc/logo-wine.svg AppDir/usr/share/icons/wine.svg
 
 AppDir:
   path: ./AppDir

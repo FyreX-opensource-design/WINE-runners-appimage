@@ -48,6 +48,20 @@ Winetricks:
 ./wine-*.AppImage winetricks
 ```
 
+---
+
+You can also use symlinks:
+
+```bash
+ln -s wine-*.AppImage winetricks
+ln -s wine-*.AppImage winecfg
+
+./winetricks fontsmooth=rgb
+./winecfg
+```
+
+---
+
 In case, if FUSE support libraries are not installed on the host system, it is
 still possible to run the AppImage
 

@@ -2,7 +2,7 @@
 
 This repository uses `github ci` to build `wine` appimages. These do not require
 `32-bit glibc`, and therefore, work across several linux distributions out of
-the box. The releases included are built from `wine staging`, `wine caffe`,
+the box. The releases included are built from `wine staging`, `wine-ge`, `wine caffe`,
 `wine vaniglia`, and `wine soda`. More information about their characteristics
 and differences can be found
 [here](https://docs.usebottles.com/components/runners).
@@ -11,10 +11,11 @@ and differences can be found
 
 Download the latest release for:
 
-| Staging | Caffe | Vaniglia | Soda |
-| ------- | --------- | --------- | --------- |
-| <img src="./doc/logo-wine.svg" width=100 height=100> | <img src="./doc/logo-caffe.svg" width=100 height=100> | <img src="./doc/logo-vaniglia.svg" width=100 height=100> | <img src="./doc/logo-soda.svg" width=100 height=100>
-| [Download](https://github.com/ruanformigoni/wine/releases/download/continuous-staging/wine-staging_7.19-x86_64.AppImage) | [Download](https://github.com/ruanformigoni/wine/releases/download/continuous-caffe/wine-caffe-7.19-continuous-x86_64.AppImage) | [Download](https://github.com/ruanformigoni/wine/releases/download/continuous-vaniglia/wine-vaniglia-7.19-continuous-x86_64.AppImage) | [Download](https://github.com/ruanformigoni/wine/releases/download/continuous-soda/wine-soda-7.0-6-continuous-x86_64.AppImage)
+| Staging | Caffe | Vaniglia | Soda | G. Eggroll |
+| ------- | --------- | --------- | --------- | -------- |
+| <img src="./doc/logo-wine.svg" width=100 height=100> | <img src="./doc/logo-caffe.svg" width=100 height=100> | <img src="./doc/logo-vaniglia.svg" width=100 height=100> | <img src="./doc/logo-soda.svg" width=100 height=100> | <img src="./doc/logo-ge.svg" width=100 height=100>
+| [Download](https://github.com/ruanformigoni/wine/releases) | [Download](https://github.com/ruanformigoni/wine/releases) | [Download](https://github.com/ruanformigoni/wine/releases) | [Download](https://github.com/ruanformigoni/wine/releases) | [Download](https://github.com/ruanformigoni/wine/releases)
+
 
 </p>
 

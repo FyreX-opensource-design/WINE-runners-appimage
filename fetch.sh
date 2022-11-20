@@ -8,39 +8,59 @@
 set -e
 
 if [ "$2" = "--version" ]; then
-    curl -H "Accept: application/vnd.github+json" \
-        https://api.github.com/repos/bottlesdevs/wine/releases 2>&1 |
-        pcregrep -io1  "https://.*/download/.*/$1-(.*)-" |
-        sed -e '/cx/d' |
-        sort --sort=version |
-        tail -n1
+  case "$1" in
+    "ge") curl -H "Accept: application/vnd.github+json" \
+      https://api.github.com/repos/GloriousEggroll/wine-ge-custom/releases 2>&1 |
+      pcregrep -io "https://.*/download/.*\.tar(\.xz|\.xz)" |
+      sort --sort=version |
+      tail -n1 |
+      pcregrep -io1 "https://.*/download/.*/.*Proton(.*)-x86.*" ;;
+    *) curl -H "Accept: application/vnd.github+json" \
+      https://api.github.com/repos/bottlesdevs/wine/releases 2>&1 |
+      pcregrep -io1  "https://.*/download/.*/$1-(.*)-" |
+      sed -e '/cx/d' |
+      sort --sort=version |
+      tail -n1 ;;
+  esac
 
     exit
 fi
 
-name="$*"
+[ "$1" ] || exit 1
 
-[ "$name" ] || exit 1
-
-runner="$(curl -H "Accept: application/vnd.github+json" \
+case "$1" in
+  "ge") runner="$(curl -H "Accept: application/vnd.github+json" \
+    https://api.github.com/repos/GloriousEggroll/wine-ge-custom/releases 2>&1 |
+    pcregrep -io "https://.*/download/.*\.tar(\.xz|\.xz)" |
+    sort --sort=version |
+    tail -n1)" ;;
+  *) runner="$(curl -H "Accept: application/vnd.github+json" \
     https://api.github.com/repos/bottlesdevs/wine/releases 2>&1 |
     pcregrep -io  "https://.*/download/.*/$1-.*\.tar(\.xz|\.gz)" |
     sed -e '/cx/d' |
     sort --sort=version |
-    tail -n1)"
+    tail -n1)" ;;
+esac
 
 echo "runner: $runner"
 
 [ "$runner" ] || exit 1
 
-wget -q "$runner"
+# Fetch wine
+wget -q --show-progress --progress=dot:mega "$runner"
 
-tar -xf "$name"*.tar.*
+# Extract wine
+tar -xf ./*.tar.*
 
-cp -r "$name"*-x86_64/* AppDir
+# Create appdir
+mkdir -p AppDir
 
-rm ./"$name"*.tar.*
-rm -rf ./"$name"*-x86_64
+# Copy wine files to appdir
+cp -r ./*-x86_64/* AppDir
+
+# Remove tarball and extracted directory
+rm ./*.tar.*
+rm -rf ./*-x86_64
 
 # // cmd: !./% caffe
 

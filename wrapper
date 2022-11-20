@@ -28,7 +28,7 @@ fi
 
 if   read -r MAIN < <(find "$APPDIR/bin" "$APPDIR/usr/bin" -iname "$BINARY_NAME" -print -quit); then
   echo "INFO:wine: '$MAIN $*'"
-elif read -r MAIN < <(find "$APPDIR/bin" "$APPDIR/usr/bin" -iname "$(basename "$1")" -print -quit); then
+elif read -r MAIN < <(find "$APPDIR/bin" "$APPDIR/usr/bin" -iname "$(basename "${1##*-}")" -print -quit); then
   shift
   echo "INFO:wine: '$MAIN $*'"
 elif read -r MAIN < <(find "$APPDIR/bin" "$APPDIR/usr/bin" \( -iname "wine" -o -iname "wine64" \) -print -quit); then

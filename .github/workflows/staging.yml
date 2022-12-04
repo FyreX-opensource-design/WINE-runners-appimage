@@ -51,7 +51,7 @@ jobs:
           # add dir dist
           mkdir dist
 
-          appimage-builder --recipe wine-staging.yml
+          ./appimage-builder/AppRun --recipe wine-staging.yml
           mv *AppImage* dist/.
 
       - name: Upload artifact

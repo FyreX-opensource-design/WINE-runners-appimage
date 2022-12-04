@@ -35,7 +35,11 @@ jobs:
           # Packages
           sudo apt install -y pcregrep
           # Builder
-          wget -q "https://github.com/AppImageCrafters/appimage-builder/releases/download/v1.0.3/appimage-builder-1.0.3-x86_64.AppImage" -O appimage-builder ; chmod +x appimage-builder ; sudo mv appimage-builder /usr/bin
+          wget -q "https://github.com/AppImageCrafters/appimage-builder/releases/download/v1.0.3/appimage-builder-1.0.3-x86_64.AppImage" -O appimage-builder
+          chmod +x appimage-builder
+          ./appimage-builder --appimage-extract
+          rm appimage-builder
+          mv squashfs-root appimage-builder
           # Icon
           mkdir -p /usr/share/icons/hicolor/scalable/ ; cp doc/logo-wine.svg /usr/share/icons/hicolor/scalable/wine.svg
           # staging

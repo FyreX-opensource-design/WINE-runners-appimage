@@ -37,7 +37,9 @@ jobs:
           # Get appimagebuilder
           wget -q "https://github.com/AppImageCrafters/appimage-builder/releases/download/v1.0.3/appimage-builder-1.0.3-x86_64.AppImage" -O appimage-builder
           chmod +x appimage-builder
-          sudo mv appimage-builder /usr/bin
+          ./appimage-builder --appimage-extract
+          rm appimage-builder
+          mv squashfs-root appimage-builder
           # Get wine version
           chmod +x fetch.sh
 
@@ -58,7 +60,7 @@ jobs:
           # Select vaniglia
           sed -i 's/BOTTLES_RUNNER/vaniglia/' wine-bottles.yml
 
-          appimage-builder --recipe wine-bottles.yml
+          ./appimage-builder/AppRun --recipe wine-bottles.yml
           mv *.AppImage dist/wine-vaniglia-${{ env.version_wine }}-continuous-x86_64.AppImage
           mv *.AppImage.zsync dist/wine-vaniglia-${{ env.version_wine }}-continuous-x86_64.AppImage.zsync
 

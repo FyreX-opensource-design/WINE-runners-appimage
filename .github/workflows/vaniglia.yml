@@ -75,6 +75,7 @@ jobs:
 
 
   release-vaniglia:
+      permissions: write-all
       needs: [build-vaniglia]
       runs-on: ubuntu-latest
 

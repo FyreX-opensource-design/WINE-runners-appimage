@@ -75,6 +75,7 @@ jobs:
 
 
   release-soda:
+      permissions: write-all
       needs: [build-soda]
       runs-on: ubuntu-latest
 

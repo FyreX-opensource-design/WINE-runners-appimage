@@ -75,6 +75,7 @@ jobs:
 
 
   release-caffe:
+      permissions: write-all
       needs: [build-caffe]
       runs-on: ubuntu-latest
 

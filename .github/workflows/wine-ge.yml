@@ -64,10 +64,25 @@ jobs:
           mv *.AppImage dist/wine-ge-${{ env.version_wine }}-continuous-x86_64.AppImage
           mv *.AppImage.zsync dist/wine-ge-${{ env.version_wine }}-continuous-x86_64.AppImage.zsync
 
+      # Creates prefix
+      - name: Wine Prefix
+        run: |
+          mkdir wineprefix
+          export WINEPREFIX="$(pwd)/wineprefix"
+          export WINEARCH="win64"
+          unset DISPLAY
+          dist/wine-ge-${{ env.version_wine }}-continuous-x86_64.AppImage --appimage-extract
+          squashfs-root/AppRun winetricks fontsmooth=rgb
+          squashfs-root/AppRun winetricks dxvk
+          rm -rf squashfs-root
+          tar -cf wineprefix-64.tar wineprefix
+          xz -z6v wineprefix-64.tar
+          mv wineprefix-64.tar.xz dist/wineprefix64-ge-${{ env.version_wine }}.tar.xz
+
       - name: Upload artifact
         uses: actions/upload-artifact@v1.0.0
         with:
-          name: wine-ge-${{ env.version_wine }}-continuous-x86_64.AppImage
+          name: wine-stuff
           path: 'dist'
 
     outputs:
@@ -81,7 +96,7 @@ jobs:
       steps:
         - uses: actions/download-artifact@v1
           with:
-            name: wine-ge-${{ needs.build-ge.outputs.version }}-continuous-x86_64.AppImage
+            name: wine-stuff
 
         - name: release
           uses: marvinpinto/action-automatic-releases@latest
@@ -91,6 +106,6 @@ jobs:
             prerelease: false
             draft: false
             files: |
-              wine-ge-${{ needs.build-ge.outputs.version }}-continuous-x86_64.AppImage
+              wine-stuff
             repo_token: ${{ secrets.GITHUB_TOKEN }}
 

@@ -35,7 +35,7 @@ jobs:
           # Packages
           sudo apt install -y pcregrep
           # Get appimagebuilder
-          wget -q "https://github.com/AppImageCrafters/appimage-builder/releases/download/v1.0.3/appimage-builder-1.0.3-x86_64.AppImage" -O appimage-builder
+          wget -q "https://github.com/AppImageCrafters/appimage-builder/releases/download/Continuous/appimage-builder-1.1.1.dev32+g2709a3b-x86_64.AppImage" -O appimage-builder
           chmod +x appimage-builder
           ./appimage-builder --appimage-extract
           rm appimage-builder

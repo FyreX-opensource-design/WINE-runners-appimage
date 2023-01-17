@@ -113,6 +113,8 @@ AppDir:
      sed -i '/\%11\%\\winemenubuilder.exe -a -r/d' AppDir/opt/wine-staging/share/wine/wine.inf
 
   runtime:
+    env:
+      LIBGL_DRIVERS_PATH: '${APPDIR}/usr/lib/i386-linux-gnu/dri:${APPDIR}/usr/lib/x86_64-linux-gnu/dri:${LIBGL_DRIVERS_PATH}'
     path_mappings:
     - /opt/wine-staging:$APPDIR/opt/wine-staging
 

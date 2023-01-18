@@ -64,10 +64,26 @@ jobs:
           mv *.AppImage dist/wine-vaniglia-${{ env.version_wine }}-continuous-x86_64.AppImage
           mv *.AppImage.zsync dist/wine-vaniglia-${{ env.version_wine }}-continuous-x86_64.AppImage.zsync
 
+      # Creates prefix
+      - name: Wine Prefix
+        run: |
+          mkdir wine
+          export WINEPREFIX="$(pwd)/wine"
+          export WINEARCH="win64"
+          unset DISPLAY
+          dist/wine-vaniglia-${{ env.version_wine }}-continuous-x86_64.AppImage --appimage-extract
+          squashfs-root/AppRun winetricks fontsmooth=rgb
+          squashfs-root/AppRun winetricks dxvk
+          rm -rf squashfs-root
+          rm -rf wine/drive_c/users/runner
+          tar -cf wineprefix-64.tar wine
+          xz -z9ev wineprefix-64.tar
+          mv wineprefix-64.tar.xz dist/wineprefix64-vaniglia-${{ env.version_wine }}.tar.xz
+
       - name: Upload artifact
         uses: actions/upload-artifact@v1.0.0
         with:
-          name: wine-vaniglia-${{ env.version_wine }}-continuous-x86_64.AppImage
+          name: wine-vaniglia
           path: 'dist'
 
     outputs:
@@ -82,7 +98,7 @@ jobs:
       steps:
         - uses: actions/download-artifact@v1
           with:
-            name: wine-vaniglia-${{ needs.build-vaniglia.outputs.version }}-continuous-x86_64.AppImage
+            name: wine-vaniglia
 
         - name: release
           uses: marvinpinto/action-automatic-releases@latest
@@ -92,5 +108,5 @@ jobs:
             prerelease: false
             draft: false
             files: |
-              wine-vaniglia-${{ needs.build-vaniglia.outputs.version }}-continuous-x86_64.AppImage
+              wine-vaniglia
             repo_token: ${{ secrets.GITHUB_TOKEN }}

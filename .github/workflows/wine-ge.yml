@@ -67,22 +67,23 @@ jobs:
       # Creates prefix
       - name: Wine Prefix
         run: |
-          mkdir wineprefix
-          export WINEPREFIX="$(pwd)/wineprefix"
+          mkdir wine
+          export WINEPREFIX="$(pwd)/wine"
           export WINEARCH="win64"
           unset DISPLAY
           dist/wine-ge-${{ env.version_wine }}-continuous-x86_64.AppImage --appimage-extract
           squashfs-root/AppRun winetricks fontsmooth=rgb
           squashfs-root/AppRun winetricks dxvk
           rm -rf squashfs-root
-          tar -cf wineprefix-64.tar wineprefix
-          xz -z6v wineprefix-64.tar
+          rm -rf wine/drive_c/users/runner
+          tar -cf wineprefix-64.tar wine
+          xz -z9ev wineprefix-64.tar
           mv wineprefix-64.tar.xz dist/wineprefix64-ge-${{ env.version_wine }}.tar.xz
 
       - name: Upload artifact
         uses: actions/upload-artifact@v1.0.0
         with:
-          name: wine-stuff
+          name: wine-ge
           path: 'dist'
 
     outputs:
@@ -96,7 +97,7 @@ jobs:
       steps:
         - uses: actions/download-artifact@v1
           with:
-            name: wine-stuff
+            name: wine-ge
 
         - name: release
           uses: marvinpinto/action-automatic-releases@latest
@@ -106,6 +107,6 @@ jobs:
             prerelease: false
             draft: false
             files: |
-              wine-stuff
+              wine-ge
             repo_token: ${{ secrets.GITHUB_TOKEN }}
 

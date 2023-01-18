@@ -42,8 +42,14 @@ jobs:
           mv squashfs-root appimage-builder
           # Icon
           mkdir -p /usr/share/icons/hicolor/scalable/ ; cp doc/logo-wine.svg /usr/share/icons/hicolor/scalable/wine.svg
-          # staging
-          echo "WINE_VER=staging_$(wget -qO- https://dl.winehq.org/wine-builds/ubuntu/dists/bionic/main/binary-amd64/ | grep wine-staging | sed 's|_| |g;s|~| |g' | awk '{print $5}' | tail -n1)" >> $GITHUB_ENV
+
+      # Get wine version
+      - name: Version
+        id: version
+        run: |
+          version_wine="$(wget -qO- https://dl.winehq.org/wine-builds/ubuntu/dists/bionic/main/binary-amd64/ | grep wine-staging | sed 's|_| |g;s|~| |g' | awk '{print $5}' | tail -n1)"
+          echo "version_wine=$version_wine" >> $GITHUB_ENV
+          echo "version_wine=$version_wine" >> $GITHUB_OUTPUT
 
       # Runs a set of commands using the runners shell
       - name: Build appimage

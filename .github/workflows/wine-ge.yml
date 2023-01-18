@@ -40,13 +40,12 @@ jobs:
           ./appimage-builder --appimage-extract
           rm appimage-builder
           mv squashfs-root appimage-builder
-          # Get wine version
-          chmod +x fetch.sh
 
       # Get wine version
       - name: Version
         id: version
         run: |
+          chmod +x fetch.sh
           version_wine="$(./fetch.sh ge --version)"
           echo "version_wine=$version_wine" >> $GITHUB_ENV
           echo "version_wine=$version_wine" >> $GITHUB_OUTPUT

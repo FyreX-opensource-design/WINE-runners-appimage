@@ -75,7 +75,7 @@ jobs:
           rm -rf wine/drive_c/users/runner
           tar -cf wineprefix-64.tar wine
           xz -z9ev wineprefix-64.tar
-          mv wineprefix-64.tar.xz dist/wineprefix64-staging-${{ env.version_wine }}.tar.xz
+          mv wineprefix-64.tar.xz dist/
 
       - name: Upload artifact
         uses: actions/upload-artifact@v1.0.0

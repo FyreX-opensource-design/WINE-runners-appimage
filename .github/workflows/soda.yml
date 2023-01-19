@@ -67,18 +67,9 @@ jobs:
       # Creates prefix
       - name: Wine Prefix
         run: |
-          mkdir wine
-          export WINEPREFIX="$(pwd)/wine"
-          export WINEARCH="win64"
-          unset DISPLAY
-          dist/wine-soda-${{ env.version_wine }}-continuous-x86_64.AppImage --appimage-extract
-          squashfs-root/AppRun winetricks fontsmooth=rgb
-          squashfs-root/AppRun winetricks dxvk
-          rm -rf squashfs-root
-          rm -rf wine/drive_c/users/runner
-          tar -cf wineprefix-64.tar wine
-          xz -z9ev wineprefix-64.tar
-          mv wineprefix-64.tar.xz dist/wineprefix64-soda-${{ env.version_wine }}.tar.xz
+          wget -q --show-progress --progress=dot:mega \
+            https://github.com/ruanformigoni/wine/releases/download/continuous-ge/wineprefix-64.tar.xz
+          mv wineprefix-64.tar.xz dist/
 
       - name: Upload artifact
         uses: actions/upload-artifact@v1.0.0

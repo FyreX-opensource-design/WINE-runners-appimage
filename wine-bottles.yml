@@ -34,6 +34,7 @@ AppDir:
 
     include:
       - bash
+      - python3-pip
       - cabextract
       - cups
       - dash
@@ -42,7 +43,11 @@ AppDir:
       - mesa-utils
       - unionfs-fuse
       - vulkan-tools
+      - libc6
+      - libc6:i386
       - libcups2
+      - libfreetype6
+      - libfreetype6:i386
       - libfuse2
       - libfuse3-3
       - libmspack0

@@ -33,7 +33,9 @@ jobs:
       - name: Prerequisites
         run: |
           # Packages
-          sudo apt install -y pcregrep
+          sudo apt install -y pcregrep patchelf git
+          # Create build dir
+          git clone https://github.com/ruanformigoni/wine.git build && cd build
           # Get appimagebuilder
           wget -q "https://github.com/AppImageCrafters/appimage-builder/releases/download/Continuous/appimage-builder-1.1.1.dev32+g2709a3b-x86_64.AppImage" -O appimage-builder
           chmod +x appimage-builder
@@ -56,12 +58,29 @@ jobs:
           # add dir dist
           mkdir dist
 
-          # Select ge
-          sed -i 's/BOTTLES_RUNNER/ge/' wine-bottles.yml
+          # Enter build dir
+          cd build
 
-          ./appimage-builder/AppRun --recipe wine-bottles.yml
-          mv *.AppImage dist/wine-ge-${{ env.version_wine }}-continuous-x86_64.AppImage
-          mv *.AppImage.zsync dist/wine-ge-${{ env.version_wine }}-continuous-x86_64.AppImage.zsync
+          # Select ge
+          sed -i 's/BOTTLES_RUNNER/ge/' ../wine-bottles.yml
+
+          ./appimage-builder/AppRun --recipe ../wine-bottles.yml
+          mv *.AppImage ../dist/wine-ge-${{ env.version_wine }}-continuous-x86_64.AppImage
+          mv *.AppImage.zsync ../dist/wine-ge-${{ env.version_wine }}-continuous-x86_64.AppImage.zsync
+
+          cd .. && rm -rf build
+
+      # Builds the appimage with portable glibc for wine
+      - name: Build glibc-i686 appimage
+        run: |
+          # Create and enter build dir
+          git clone https://github.com/ruanformigoni/wine.git build && cd build
+          # Fetch
+          chmod +x fetch.sh && ./fetch.sh "ge"
+          # add patch
+          ../patch.sh ../dist/wine-ge-${{ env.version_wine }}-continuous-x86_64.AppImage
+
+          mv *.AppImage ../dist/wine-ge-${{ env.version_wine }}-continuous-x86_64-portable-glibc-i386.AppImage
 
       # Creates prefix
       - name: Wine Prefix

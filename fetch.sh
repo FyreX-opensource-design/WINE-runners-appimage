@@ -2,7 +2,7 @@
 
 ######################################################################
 # @author      : Ruan E. Formigoni (ruanformigoni@gmail.com)
-# @file        : fetch
+# @file        : fetch.sh
 ######################################################################
 
 set -e
@@ -59,7 +59,6 @@ mkdir -p AppDir
 cp -r ./*-x86_64/* AppDir
 
 # Remove tarball and extracted directory
-rm ./*.tar.*
 rm -rf ./*-x86_64
 
 # // cmd: !./% caffe

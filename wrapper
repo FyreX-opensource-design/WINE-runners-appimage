@@ -1,3 +1,13 @@
+#!/usr/bin/env bash
+
+######################################################################
+# @author      : Ruan E. Formigoni (ruanformigoni@gmail.com)
+# @file        : wrapper
+# @created     : Saturday Jan 21, 2023 19:00:53 -03
+######################################################################
+
+set -e
+
 # WINE env
 export WINEPREFIX=${WINEPREFIX:-"$HOME/.wine-appimage"}
 export WINEDEBUG=${WINEDEBUG:-"fixme-all"}
@@ -9,7 +19,9 @@ export DXVK_STATE_CACHE=${DXVK_STATE_CACHE:-"0"}
 export DXVK_CONFIG_FILE=${DXVK_CONFIG_FILE:-"$progHome/dxvk.conf"}
 
 # check gpu vendor
-VENDOR=$(glxinfo -B | grep "OpenGL vendor")
+if command -v glxinfo &>/dev/null; then
+  VENDOR=$(glxinfo -B | grep "OpenGL vendor")
+fi
 
 if [[ $VENDOR == *"Intel"* ]]; then
   export VK_ICD_FILENAMES="/usr/share/vulkan/icd.d/intel_icd.i686.json:/usr/share/vulkan/icd.d/intel_icd.x86_64.json"
@@ -18,6 +30,8 @@ elif [[ $VENDOR == *"NVIDIA"* ]]; then
 elif [[ $VENDOR == *"Radeon"* ]]; then
   export VK_ICD_FILENAMES="/usr/share/vulkan/icd.d/radeon_icd.i686.json:/usr/share/vulkan/icd.d/radeon_icd.x86_64.json"
 fi
+
+# CI_PLACEHOLDER
 
 # Allow the AppImage to be symlinked to e.g., /usr/bin/wineserver
 if [ -n "$APPIMAGE" ] ; then

@@ -20,7 +20,7 @@ sed -i -e 's|# CI_PLACEHOLDER|# Setup symlinks\n( LOC=$(readlink -f "$APPDIR") ;
 # Unpack wine
 mkdir -p wine
 # [ -d "$(pwd)/wine" ] || tar -xf "$1" --directory="$(pwd)/wine"
-tar -xvf ./wine*.tar.* -C "$(pwd)/wine" --strip-components=1
+tar -xvf ./*.tar.* -C "$(pwd)/wine" --strip-components=1
 
 # Remove old dirs and symlinks
 rm -rfv ./usr /tmp/i386-linux-gnu /tmp/lib /tmp/ld-linux.so.2
@@ -58,13 +58,13 @@ cp -r ./wine/* ./usr/tmp/ && rm -rf ./wine
 
 # Remove need to use LD_LIBRARY_PATH
 # shellcheck disable=2016
-find usr/tmp/lib/wine/i386-unix/*.so* -exec patchelf --set-rpath '$ORIGIN:$ORIGIN/../:$ORIGIN/../../tmp/i386-linux-gnu:$ORIGIN/../../tmp/lib/i386-linux-gnu' {} \;
+find usr/tmp/lib/wine/i386-unix/*.so* -exec patchelf --set-rpath '$ORIGIN:$ORIGIN/../:$ORIGIN/../../tmp/i386-linux-gnu:$ORIGIN/../../tmp/lib/i386-linux-gnu' {} \; || true
 # shellcheck disable=2016
-find usr/tmp/lib/*.so* -exec patchelf --set-rpath '$ORIGIN:$ORIGIN/../tmp/i386-linux-gnu:$ORIGIN/../tmp/lib/i386-linux-gnu' {} \;
+find usr/tmp/lib/*.so* -exec patchelf --set-rpath '$ORIGIN:$ORIGIN/../tmp/i386-linux-gnu:$ORIGIN/../tmp/lib/i386-linux-gnu' {} \; || true
 # shellcheck disable=2016
-find usr/tmp/i386-linux-gnu/*so* -exec patchelf --set-rpath '$ORIGIN' {} \;
+find usr/tmp/i386-linux-gnu/*so* -exec patchelf --set-rpath '$ORIGIN' {} \; || true
 # shellcheck disable=2016
-find usr/tmp/lib/i386-linux-gnu/*so* -exec patchelf --set-rpath '$ORIGIN:$ORIGIN/..' {} \;
+find usr/tmp/lib/i386-linux-gnu/*so* -exec patchelf --set-rpath '$ORIGIN:$ORIGIN/..' {} \; || true
 
 # Move wine inside the install prefix
 cp -r ./usr/tmp/* out

@@ -33,20 +33,21 @@ jobs:
       - name: Prerequisites
         run: |
           # Packages
-          sudo apt install -y pcregrep
+          sudo apt install -y pcregrep patchelf git
+          # Create build dir
+          git clone https://github.com/ruanformigoni/wine.git build && cd build
           # Get appimagebuilder
           wget -q "https://github.com/AppImageCrafters/appimage-builder/releases/download/Continuous/appimage-builder-1.1.1.dev32+g2709a3b-x86_64.AppImage" -O appimage-builder
           chmod +x appimage-builder
           ./appimage-builder --appimage-extract
           rm appimage-builder
           mv squashfs-root appimage-builder
-          # Get wine version
-          chmod +x fetch.sh
 
       # Get wine version
       - name: Version
         id: version
         run: |
+          chmod +x fetch.sh
           version_wine="$(./fetch.sh soda --version)"
           echo "version_wine=$version_wine" >> $GITHUB_ENV
           echo "version_wine=$version_wine" >> $GITHUB_OUTPUT
@@ -57,14 +58,31 @@ jobs:
           # add dir dist
           mkdir dist
 
+          # Enter build dir
+          cd build
+
           # Select soda
-          sed -i 's/BOTTLES_RUNNER/soda/' wine-bottles.yml
+          sed -i 's/BOTTLES_RUNNER/soda/' ../wine-bottles.yml
 
-          ./appimage-builder/AppRun --recipe wine-bottles.yml
-          mv *.AppImage dist/wine-soda-${{ env.version_wine }}-continuous-x86_64.AppImage
-          mv *.AppImage.zsync dist/wine-soda-${{ env.version_wine }}-continuous-x86_64.AppImage.zsync
+          ./appimage-builder/AppRun --recipe ../wine-bottles.yml
+          mv *.AppImage ../dist/wine-soda-${{ env.version_wine }}-continuous-x86_64.AppImage
+          mv *.AppImage.zsync ../dist/wine-soda-${{ env.version_wine }}-continuous-x86_64.AppImage.zsync
 
-      # Creates prefix
+          cd .. && rm -rf build
+
+      # Builds the appimage with portable glibc for wine
+      - name: Build glibc-i686 appimage
+        run: |
+          # Create and enter build dir
+          git clone https://github.com/ruanformigoni/wine.git build && cd build
+          # Fetch
+          chmod +x fetch.sh && ./fetch.sh "soda"
+          # add patch
+          ../patch.sh ../dist/wine-soda-${{ env.version_wine }}-continuous-x86_64.AppImage
+
+          mv *.AppImage ../dist/wine-soda-${{ env.version_wine }}-continuous-x86_64-portable-glibc-i386.AppImage
+
+      # Fetches prefix
       - name: Wine Prefix
         run: |
           wget -q --show-progress --progress=dot:mega \

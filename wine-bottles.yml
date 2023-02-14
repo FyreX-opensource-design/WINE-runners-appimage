@@ -85,6 +85,16 @@ AppDir:
       - libxcb-xfixes0:i386
       - libxcb1:i386
 
+  after_bundle:
+    # this is executed after the packages and files are added
+    - |
+     # Disable FileOpenAssociations
+     sed -i 's|    LicenseInformation|    LicenseInformation,\\\n    FileOpenAssociations|g;$a \\n[FileOpenAssociations]\nHKCU,Software\\Wine\\FileOpenAssociations,"Enable",,"N"' AppDir/share/wine/wine.inf
+
+     # Disable winemenubuilder
+     sed -i 's|    FileOpenAssociations|    FileOpenAssociations,\\\n    DllOverrides|;$a \\n[DllOverrides]\nHKCU,Software\\Wine\\DllOverrides,"*winemenubuilder.exe",,""' AppDir/share/wine/wine.inf
+     sed -i '/\%11\%\\winemenubuilder.exe -a -r/d' AppDir/share/wine/wine.inf
+
   runtime:
     env:
       LIBGL_DRIVERS_PATH: '${APPDIR}/usr/lib/i386-linux-gnu/dri:${APPDIR}/usr/lib/x86_64-linux-gnu/dri:${LIBGL_DRIVERS_PATH}'

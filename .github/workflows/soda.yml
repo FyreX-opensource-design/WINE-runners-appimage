@@ -66,7 +66,6 @@ jobs:
 
           ./appimage-builder/AppRun --recipe ../wine-bottles.yml
           mv *.AppImage ../dist/wine-soda-${{ env.version_wine }}-continuous-x86_64.AppImage
-          mv *.AppImage.zsync ../dist/wine-soda-${{ env.version_wine }}-continuous-x86_64.AppImage.zsync
 
           cd .. && rm -rf build
 

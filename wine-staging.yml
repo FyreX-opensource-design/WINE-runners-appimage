@@ -40,6 +40,48 @@ AppDir:
       - coreutils
       - mesa-utils
       - unionfs-fuse
+      - vulkan-tools
+      - libc6
+      - libc6:i386
+      - libcups2
+      - libfreetype6
+      - libfreetype6:i386
+      - libfuse2
+      - libfuse3-3
+      - libmspack0
+      - gstreamer1.0-plugins-good:i386
+      - gstreamer1.0-plugins-bad:i386
+      - gstreamer1.0-plugins-ugly:i386
+      - libdrm2:i386
+      - libdrm-intel1:i386
+      - libdrm-nouveau2:i386
+      - libdrm-amdgpu1:i386
+      - libdrm-radeon1:i386
+      - libegl-mesa0:i386
+      - libegl1:i386
+      - libgbm1:i386
+      - libgl1:i386
+      - libgl1-mesa-dri:i386
+      - libglapi-mesa:i386
+      - libgles2:i386
+      - libglvnd0:i386
+      - libglx0:i386
+      - libglx-mesa0:i386
+      - mesa-vdpau-drivers:i386
+      - mesa-va-drivers:i386
+      - mesa-vulkan-drivers:i386
+      - libopenal1:i386
+      - libx11-6:i386
+      - libx11-xcb1:i386
+      - libxcb-dri2-0:i386
+      - libxcb-dri3-0:i386
+      - libxcb-glx0:i386
+      - libxcb-present0:i386
+      - libxcb-render0:i386
+      - libxcb-shape0:i386
+      - libxcb-shm0:i386
+      - libxcb-xfixes0:i386
+      - libxcb1:i386
 
   files:
     exclude:
@@ -119,7 +161,6 @@ AppDir:
     - /opt/wine-staging:$APPDIR/opt/wine-staging
 
 AppImage:
-  update-information: gh-releases-zsync|mmtrt|WINE_AppImage|continuous-staging|wine-staging*.AppImage.zsync
   #sign-key: None
   arch: x86_64
 

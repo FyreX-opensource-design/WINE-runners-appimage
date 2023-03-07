@@ -59,7 +59,6 @@ jobs:
 
           ./appimage-builder/AppRun --recipe wine-staging.yml
           mv *.AppImage dist/wine-staging-${{ env.version_wine }}-continuous-x86_64.AppImage
-          mv *.AppImage.zsync dist/wine-staging-${{ env.version_wine }}-continuous-x86_64.AppImage.zsync
 
       # Creates prefix
       - name: Wine Prefix

@@ -11,6 +11,7 @@ set -e
 # WINE env
 export WINEPREFIX=${WINEPREFIX:-"$HOME/.wine-appimage"}
 export WINEDEBUG=${WINEDEBUG:-"fixme-all"}
+export WINEHOME=${WINEHOME:-"$WINEPREFIX/wine-home"}
 
 # DXVK env
 export DXVK_HUD=${DXVK_HUD:-"0"}
@@ -19,6 +20,9 @@ export DXVK_STATE_CACHE=${DXVK_STATE_CACHE:-"0"}
 
 # Create WINEPREFIX
 mkdir -p "$WINEPREFIX"
+
+# Create WINEHOME
+mkdir -p "$WINEHOME"
 
 # check gpu vendor
 if command -v glxinfo &>/dev/null; then
@@ -80,11 +84,15 @@ elif read -r MAIN < <(find "$APPDIR/bin" "$APPDIR/usr/bin" -iname "$(basename "$
   echo "$BINARY_NAME: '$MAIN $*'"
 # Check for wine binaries in usr/bin and bin
 elif read -r MAIN < <(find "$APPDIR/bin" "$APPDIR/usr/bin" \( -iname "wine" -o -iname "wine64" \) -print -quit); then
-  LD_TRACE_LOADED_OBJECTS=1 $MAIN --version
   echo "$BINARY_NAME: '$MAIN $*'"
 else
   echo "ERR:wine binaries not found"
   exit 1
 fi
 
-"$MAIN" "$@"
+if [[ "$(basename "$MAIN")" == "wine" ]] ||
+   [[ "$(basename "$MAIN")" == "wine64" ]]; then
+  LD_TRACE_LOADED_OBJECTS=1 $MAIN --version
+fi
+
+HOME="$WINEHOME" "$MAIN" "$@"

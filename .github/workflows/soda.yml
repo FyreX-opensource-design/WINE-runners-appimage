@@ -81,15 +81,15 @@ jobs:
 
           mv *.AppImage ../dist/wine-soda-${{ env.version_wine }}-continuous-x86_64-portable-glibc-i386.AppImage
 
-      # Fetches prefix
-      - name: Wine Prefix
-        run: |
-          wget -q --show-progress --progress=dot:mega \
-            https://github.com/ruanformigoni/wine/releases/download/continuous-ge/wineprefix-64.tar.xz
-          wget -q --show-progress --progress=dot:mega \
-            https://github.com/ruanformigoni/wine/releases/download/continuous-ge/wineprefix-32.tar.xz
-          mv wineprefix-64.tar.xz dist/
-          mv wineprefix-32.tar.xz dist/
+      # # Fetches prefix
+      # - name: Wine Prefix
+      #   run: |
+      #     wget -q --show-progress --progress=dot:mega \
+      #       https://github.com/ruanformigoni/wine/releases/download/continuous-ge/wineprefix-64.tar.xz
+      #     wget -q --show-progress --progress=dot:mega \
+      #       https://github.com/ruanformigoni/wine/releases/download/continuous-ge/wineprefix-32.tar.xz
+      #     mv wineprefix-64.tar.xz dist/
+      #     mv wineprefix-32.tar.xz dist/
 
       - name: Upload artifact
         uses: actions/upload-artifact@v1.0.0

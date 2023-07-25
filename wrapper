@@ -31,43 +31,50 @@ if command -v glxinfo &>/dev/null; then
   echo "GPU Vendor: $VENDOR"
 fi
 
-# Set ICD folder
-export ICD="${ICD:-$WINEPREFIX/icd.d}"
-
-# Copy ICD files
-mkdir -p "$ICD"
-cp "$APPDIR"/usr/share/vulkan/icd.d/* "$ICD"
-
 # Patch driver path
-if [[ "$VENDOR" =~ intel ]]; then
-  VENDOR_NAME='intel'
-elif [[ "$VENDOR" =~ nvidia ]]; then
-  VENDOR_NAME='nvidia'
-elif [[ "$VENDOR" =~ radeon ]] || [[ "$VENDOR" =~ amd ]]; then
-  VENDOR_NAME='radeon'
+if [[ -n "$WINE_HOST_DRIVERS" ]]; then
+  unset LIBGL_DRIVERS_PATH
+else
+  # Set ICD folder
+  export ICD="${ICD:-$WINEPREFIX/icd.d}"
+
+  # Copy ICD files
+  mkdir -p "$ICD"
+  cp "$APPDIR"/usr/share/vulkan/icd.d/* "$ICD"
+
+  # Set VK_ICD_FILENAMES
+  if [[ "$VENDOR" =~ intel ]]; then
+    VENDOR_NAME='intel'
+  elif [[ "$VENDOR" =~ nvidia ]]; then
+    VENDOR_NAME='nvidia'
+  elif [[ "$VENDOR" =~ radeon ]] || [[ "$VENDOR" =~ amd ]]; then
+    VENDOR_NAME='radeon'
+  fi
+
+  if [[ -n "$VENDOR_NAME" ]]; then
+    export VK_ICD_FILENAMES="$ICD/${VENDOR_NAME}_icd.i686.json:$ICD/${VENDOR_NAME}_icd.x86_64.json"
+    sed -i "s|/usr|$APPDIR/usr|" "$ICD/${VENDOR_NAME}_icd.i686.json"
+    sed -i "s|/usr|$APPDIR/usr|" "$ICD/${VENDOR_NAME}_icd.x86_64.json"
+  fi
+
+  # Set LD_LIBRARY_PATH
+  export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$APPDIR/usr/lib/i386-linux-gnu"
+  export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$APPDIR/usr/lib/x86_64-linux-gnu"
+  export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$APPDIR/usr/lib"
+  export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$APPDIR/usr/lib64"
+  # Causes stack smashing
+  # export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$APPDIR/runtime/compat/lib/x86_64-linux-gnu"
+  # export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$APPDIR/runtime/compat/lib/i386-linux-gnu"
 fi
 
-if [[ -n "$VENDOR_NAME" ]]; then
-  export VK_ICD_FILENAMES="$ICD/${VENDOR_NAME}_icd.i686.json:$ICD/${VENDOR_NAME}_icd.x86_64.json"
-  sed -i "s|/usr|$APPDIR/usr|" "$ICD/${VENDOR_NAME}_icd.i686.json"
-  sed -i "s|/usr|$APPDIR/usr|" "$ICD/${VENDOR_NAME}_icd.x86_64.json"
-fi
-
+echo "VK_ICD_FILENAMES: $VK_ICD_FILENAMES"
+echo "LIBGL_DRIVERS_PATH: $LIBGL_DRIVERS_PATH"
 
 # Log vulkan info
 if command -v vulkaninfo &>/dev/null; then
   vulkaninfo &>"$WINEPREFIX/vulkan.log"
   echo "Written vulkan info to $WINEPREFIX/vulkan.log"
 fi
-
-# Set LD_LIBRARY_PATH
-export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$APPDIR/usr/lib/i386-linux-gnu"
-export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$APPDIR/usr/lib/x86_64-linux-gnu"
-export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$APPDIR/usr/lib"
-export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$APPDIR/usr/lib64"
-# Causes stack smashing
-# # export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$APPDIR/runtime/compat/lib/x86_64-linux-gnu"
-# # export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$APPDIR/runtime/compat/lib/i386-linux-gnu"
 
 # CI_PLACEHOLDER
 

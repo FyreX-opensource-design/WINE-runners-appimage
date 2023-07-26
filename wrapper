@@ -45,8 +45,6 @@ else
   # Set VK_ICD_FILENAMES
   if [[ "$VENDOR" =~ intel ]]; then
     VENDOR_NAME='intel'
-  elif [[ "$VENDOR" =~ nvidia ]]; then
-    VENDOR_NAME='nvidia'
   elif [[ "$VENDOR" =~ radeon ]] || [[ "$VENDOR" =~ amd ]]; then
     VENDOR_NAME='radeon'
   fi

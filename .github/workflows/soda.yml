@@ -21,7 +21,7 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y pcregrep patchelf git
-          git clone https://github.com/ruanformigoni/wine.git build && cd build
+          git clone https://github.com/FyreX-opensource-design/WINE-runners-appimage.git build && cd build
           wget -q "https://github.com/AppImageCrafters/appimage-builder/releases/download/Continuous/appimage-builder-1.1.1.dev32+g2709a3b-x86_64.AppImage" -O appimage-builder
           chmod +x appimage-builder
           ./appimage-builder --appimage-extract

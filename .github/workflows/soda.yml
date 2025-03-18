@@ -1,50 +1,34 @@
-# This is a basic workflow to help you get started with Actions
-
 name: soda
 
-# Controls when the action will run. 
 on:
-  # Build every 7 days
   schedule:
     - cron: "0 0 * * 0"
-  # Triggers the workflow on push or pull request events but only for the master branch
   push:
     branches: [ master, runner ]
     paths: [ '**soda.yml' ]
   pull_request:
     branches: [ master, runner ]
     paths: [ '**soda.yml' ]
-
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build-soda"
   build-soda:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
 
       - name: Prerequisites
         run: |
-          # Packages
+          sudo apt update
           sudo apt install -y pcregrep patchelf git
-          # Create build dir
           git clone https://github.com/ruanformigoni/wine.git build && cd build
-          # Get appimagebuilder
           wget -q "https://github.com/AppImageCrafters/appimage-builder/releases/download/Continuous/appimage-builder-1.1.1.dev32+g2709a3b-x86_64.AppImage" -O appimage-builder
           chmod +x appimage-builder
           ./appimage-builder --appimage-extract
           rm appimage-builder
           mv squashfs-root appimage-builder
 
-      # Get wine version
-      - name: Version
+      - name: Get Wine Version
         id: version
         run: |
           chmod +x fetch.sh
@@ -52,72 +36,47 @@ jobs:
           echo "version_wine=$version_wine" >> $GITHUB_ENV
           echo "version_wine=$version_wine" >> $GITHUB_OUTPUT
 
-      # Builds the appimage
-      - name: Build appimage
+      - name: Build AppImage
         run: |
-          # add dir dist
           mkdir dist
-
-          # Enter build dir
           cd build
-
-          # Select soda
           sed -i 's/BOTTLES_RUNNER/soda/' ../wine-bottles.yml
-
           ./appimage-builder/AppRun --recipe ../wine-bottles.yml
           mv *.AppImage ../dist/wine-soda-${{ env.version_wine }}-continuous-x86_64.AppImage
-
           cd .. && rm -rf build
 
-      # Builds the appimage with portable glibc for wine
-      - name: Build glibc-i686 appimage
+      - name: Build Glibc-i686 AppImage
         run: |
-          # Create and enter build dir
           git clone https://github.com/ruanformigoni/wine.git build && cd build
-          # Fetch
           chmod +x fetch.sh && ./fetch.sh "soda"
-          # add patch
           ../patch.sh ../dist/wine-soda-${{ env.version_wine }}-continuous-x86_64.AppImage
-
           mv *.AppImage ../dist/wine-soda-${{ env.version_wine }}-continuous-x86_64-portable-glibc-i386.AppImage
 
-      # # Fetches prefix
-      # - name: Wine Prefix
-      #   run: |
-      #     wget -q --show-progress --progress=dot:mega \
-      #       https://github.com/ruanformigoni/wine/releases/download/continuous-ge/wineprefix-64.tar.xz
-      #     wget -q --show-progress --progress=dot:mega \
-      #       https://github.com/ruanformigoni/wine/releases/download/continuous-ge/wineprefix-32.tar.xz
-      #     mv wineprefix-64.tar.xz dist/
-      #     mv wineprefix-32.tar.xz dist/
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4.0.0
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
         with:
           name: wine-soda
-          path: 'dist'
+          path: dist/
 
     outputs:
       version: ${{ steps.version.outputs.version_wine }}
 
-
   release-soda:
-      permissions: write-all
-      needs: [build-soda]
-      runs-on: ubuntu-latest
+    permissions: write-all
+    needs: [build-soda]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: wine-soda
+          path: wine-soda/
 
-      steps:
-        - uses: actions/download-artifact@v1
-          with:
-            name: wine-soda
-
-        - name: release
-          uses: marvinpinto/action-automatic-releases@latest
-          with:
-            title: Continuous soda ${{ needs.build-soda.outputs.version }}
-            automatic_release_tag: continuous-soda
-            prerelease: false
-            draft: false
-            files: |
-              wine-soda
-            repo_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Release
+        uses: marvinpinto/action-automatic-releases@latest
+        with:
+          title: "Continuous soda ${{ needs.build-soda.outputs.version }}"
+          automatic_release_tag: continuous-soda
+          prerelease: false
+          draft: false
+          files: wine-soda
+          repo_token: ${{ secrets.GITHUB_TOKEN }}

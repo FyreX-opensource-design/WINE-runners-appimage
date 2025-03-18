@@ -78,5 +78,5 @@ jobs:
           automatic_release_tag: continuous-soda
           prerelease: false
           draft: false
-          files: wine-soda
+          files: wine-soda/*
           repo_token: ${{ secrets.GITHUB_TOKEN }}
